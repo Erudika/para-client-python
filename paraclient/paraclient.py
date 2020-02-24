@@ -24,7 +24,7 @@ from urllib.parse import quote_plus
 import requests
 from aws_requests_auth.aws_auth import AWSRequestsAuth
 from requests import RequestException, Response
-from paraclient.AWSAuth import AWSAuth
+from paraclient.auth import AWSAuth
 from paraclient.constraint import Constraint
 from paraclient.pager import Pager
 from paraclient.paraobject import ParaObject
