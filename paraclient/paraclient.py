@@ -252,8 +252,6 @@ class ParaClient:
             headers["Authorization"] = "Anonymous " + self.__accessKey
             do_sign = False
 
-        ###
-
         if self.__tokenKey:
             if not (httpMethod == "GET" and reqPath == self.JWT_PATH):
                 self.refreshToken()
@@ -267,7 +265,7 @@ class ParaClient:
                                        aws_region='us-east-1', aws_service='para')
                 response = requests.request(httpMethod, url=(endpointURL + reqPath), auth=AWSAuth(auth), params=params,
                                             headers=headers, data=jsonEntity)
-                print("sign ", httpMethod, reqPath, response.status_code)
+                # print("sign ", httpMethod, reqPath, response.status_code)
             else:
                 response = requests.request(httpMethod, url=(endpointURL + reqPath), params=params,
                                             headers=headers, data=jsonEntity)
