@@ -1,5 +1,5 @@
 """
- * Copyright 2013-2020 Erudika. https://erudika.com
+ * Copyright 2013-2021 Erudika. https://erudika.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -894,6 +894,13 @@ class ParaClient:
         @return: a map of plural-singular form of all the registered types.
         """
         return self.getEntity(self.invokeGet("_types"))
+
+    def typesCount(self):
+        """
+        Returns the number of objects for each existing type in this App.
+        @return: a map of singular object type to object count.
+        """
+        return self.getEntity(self.invokeGet("_types", {"count": "true"}))
 
     def me(self, jwt: str = None):
         """
