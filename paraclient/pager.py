@@ -31,6 +31,7 @@ class Pager:
     limit: int = 0
     name: str = "Pager"
     lastKey: str = None
+    select: list = None
 
     def __init__(self, page: int = 1, sortby: str = "timestamp", desc: bool = True, limit: int = 30):
         self.page = page

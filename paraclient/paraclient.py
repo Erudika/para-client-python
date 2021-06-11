@@ -290,6 +290,8 @@ class ParaClient:
                 parammap["lastKey"] = p.lastKey
             if p.sortby:
                 parammap["sort"] = p.sortby
+            if p.select:
+                parammap["select"] = p.select
         return parammap
 
     @staticmethod
