@@ -52,6 +52,7 @@ class ParaClient:
     def __init__(self, accessKey: str, secretKey: str):
         self.__accessKey = accessKey
         self.__secretKey = secretKey
+        self.__endpoint = self.DEFAULT_ENDPOINT
 
     def setEndpoint(self, endpoint: str):
         """
