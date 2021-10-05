@@ -123,8 +123,8 @@ class ParaClient:
             parts = token.split(".")
             decoded = json.loads(base64.b64decode(parts[1] + "==").decode("utf-8"))
             if decoded and "exp" in decoded:
-                self.__tokenKeyExpires = decoded["exp"]
-                self.__tokenKeyNextRefresh = decoded["refresh"]
+                self.__tokenKeyExpires = decoded.get("exp")
+                self.__tokenKeyNextRefresh = decoded.get("refresh")
             else:
                 del self.__tokenKeyExpires
                 del self.__tokenKeyNextRefresh
