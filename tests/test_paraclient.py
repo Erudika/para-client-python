@@ -1,13 +1,20 @@
 import json
+import os
+import time
 from datetime import date
 from time import sleep
 from unittest import TestCase
-
+from typing import Optional
+from testcontainers.core.container import DockerContainer
 from paraclient.constraint import Constraint
 from paraclient.pager import Pager
 from paraclient.paraclient import ParaClient
 from paraclient.paraobject import ParaObject
 
+PARA_DOCKER_IMAGE = os.environ.get("PARA_TEST_IMAGE", "erudikaltd/para:latest_stable")
+PARA_DOCKER_PORT = "8080"
+PARA_ACCESS_KEY = "app:test"
+PARA_ROOT_SECRET = "Yi/b6Bw6dCFWBqHiExNUwqqT/UoUf8NuWbwOcxe7ddKuqF9luUxagA=="
 
 class ParaClientTests(TestCase):
     pc: ParaClient
@@ -25,58 +32,106 @@ class ParaClientTests(TestCase):
     a1: ParaObject
     a2: ParaObject
 
+    container: Optional[DockerContainer] = None
+    endpoint = "http://localhost:8080"
+
     @classmethod
     def setUpClass(cls):
-        cls.pc = ParaClient("app:test", "Yi/b6Bw6dCFWBqHiExNUwqqT/UoUf8NuWbwOcxe7ddKuqF9luUxagA==")
-        cls.pc.setEndpoint("http://localhost:8080")
-        cls.pc2 = ParaClient("app:test", "")
-        cls.pc2.setEndpoint("http://localhost:8080")
-        if not cls.pc.me():
-            raise Exception("Local Para server must be started before testing.")
+        #super().setUpClass()
+        try:
+            cls._start_para()
 
-        cls.u = ParaObject("111")
-        cls.u.name = "John Doe"
-        cls.u.tags = ["one", "two", "three"]
+            cls.pcRoot = ParaClient("app:para", PARA_ROOT_SECRET)
+            cls.pcRoot.setEndpoint(cls.endpoint)
+            
+            cls._wait_for_para()
 
-        cls.u1 = ParaObject("222")
-        cls.u1.name = "Joe Black"
-        cls.u1.tags = ["two", "four", "three"]
+            keys = cls.pcRoot.getEntity(cls.pcRoot.invokeGet("_setup/" + PARA_ACCESS_KEY, None), False)
 
-        cls.u2 = ParaObject("333")
-        cls.u2.name = "Ann Smith"
-        cls.u2.tags = ["four", "five", "three"]
+            cls.pc = ParaClient(PARA_ACCESS_KEY, keys["secretKey"])
+            cls.pc.setEndpoint(cls.endpoint)
+            cls.pc2 = ParaClient(PARA_ACCESS_KEY, "")
+            cls.pc2.setEndpoint(cls.endpoint)
 
-        cls.t = ParaObject("tag:test", "tag")
-        cls.t["count"] = 3
-        cls.t["tag"] = "test"
+            cls.u = ParaObject("111")
+            cls.u.name = "John Doe"
+            cls.u.tags = ["one", "two", "three"]
 
-        cls.a1 = ParaObject("adr1", "address")
-        cls.a1.name = "Place 1"
-        cls.a1["address"] = "NYC"
-        cls.a1["country"] = "US"
-        cls.a1["latlng"] = "40.67,-73.94"
-        cls.a1.parentid = cls.u.id
-        cls.a1.creatorid = cls.u.id
+            cls.u1 = ParaObject("222")
+            cls.u1.name = "Joe Black"
+            cls.u1.tags = ["two", "four", "three"]
 
-        cls.a2 = ParaObject("adr2", "address")
-        cls.a2.name = "Place 2"
-        cls.a2["address"] = "NYC"
-        cls.a2["country"] = "US"
-        cls.a2["latlng"] = "40.69,-73.95"
-        cls.a2.parentid = cls.t.id
-        cls.a2.creatorid = cls.t.id
+            cls.u2 = ParaObject("333")
+            cls.u2.name = "Ann Smith"
+            cls.u2.tags = ["four", "five", "three"]
 
-        cls.s1 = ParaObject("s1")
-        cls.s1["text"] = "This is a little test sentence. Testing, one, two, three."
+            cls.t = ParaObject("tag:test", "tag")
+            cls.t["count"] = 3
+            cls.t["tag"] = "test"
 
-        cls.s2 = ParaObject("s2")
-        cls.s2["text"] = "We are testing this thing. This sentence is a test. One, two."
+            cls.a1 = ParaObject("adr1", "address")
+            cls.a1.name = "Place 1"
+            cls.a1["address"] = "NYC"
+            cls.a1["country"] = "US"
+            cls.a1["latlng"] = "40.67,-73.94"
+            cls.a1.parentid = cls.u.id
+            cls.a1.creatorid = cls.u.id
 
-        cls.pc.createAll([cls.u, cls.u1, cls.u2, cls.t, cls.s1, cls.s2, cls.a1, cls.a2])
+            cls.a2 = ParaObject("adr2", "address")
+            cls.a2.name = "Place 2"
+            cls.a2["address"] = "NYC"
+            cls.a2["country"] = "US"
+            cls.a2["latlng"] = "40.69,-73.95"
+            cls.a2.parentid = cls.t.id
+            cls.a2.creatorid = cls.t.id
+
+            cls.s1 = ParaObject("s1")
+            cls.s1["text"] = "This is a little test sentence. Testing, one, two, three."
+
+            cls.s2 = ParaObject("s2")
+            cls.s2["text"] = "We are testing this thing. This sentence is a test. One, two."
+
+            cls.pc.createAll([cls.u, cls.u1, cls.u2, cls.t, cls.s1, cls.s2, cls.a1, cls.a2])
+
+        except Exception:
+            cls._stop_para()
+            raise
 
     @classmethod
     def tearDownClass(cls):
-        cls.pc.deleteAll([obj.id for obj in [cls.u, cls.u1, cls.u2, cls.t, cls.s1, cls.s2, cls.a1, cls.a2]])
+        try:
+            if hasattr(cls, "pc"):
+                cls.pcRoot.deleteAll([obj.id for obj in [cls.u, cls.u1, cls.u2, cls.t, cls.s1, cls.s2, cls.a1, cls.a2]])
+        finally:
+            cls._stop_para()
+
+    @classmethod
+    def _start_para(cls):
+        print("Starting Para test container...")
+        cls.container = DockerContainer(PARA_DOCKER_IMAGE).with_exposed_ports(PARA_DOCKER_PORT).with_env("para_root_secret_override", PARA_ROOT_SECRET)
+        cls.container.start()
+        host = cls.container.get_container_host_ip()
+        port = cls.container.get_exposed_port(PARA_DOCKER_PORT)
+        cls.endpoint = f"http://{host}:{port}"
+
+    @classmethod
+    def _stop_para(cls):
+        if cls.container:
+            cls.container.stop()
+            cls.container = None
+
+    @classmethod
+    def _wait_for_para(cls, timeout=120):
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            try:
+                if cls.pcRoot.me():
+                    print("Para server is ready.")
+                    return
+            except Exception:
+                pass
+            sleep(1)
+        raise RuntimeError("Para server failed to become available within timeout.")
 
     def testCRUD(self):
         self.assertIsNotNone(self.pc.create(ParaObject()))
@@ -489,7 +544,7 @@ class ParaClientTests(TestCase):
         self.pc.removeAppSetting("prop3")
         self.pc.removeAppSetting(" ")
         self.pc.removeAppSetting(None)
-        self.assertIsNone(self.pc.appSettings("prop3")["value"])
+        self.assertIs(len(self.pc.appSettings("prop3")), 0)
         self.assertIs(len(self.pc.appSettings()), 2)
         self.pc.setAppSettings({})
 

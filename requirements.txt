@@ -1,3 +1,0 @@
-requests>=2.32.5
-aws-requests-auth==0.4.3
-urllib3>=2.6.2 # not directly required, pinned by Snyk to avoid a vulnerability

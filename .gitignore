@@ -110,6 +110,8 @@ dmypy.json
 # End of https://www.gitignore.io/api/python
 
 venv
+.venv/
+.uv-cache/
 .idea
 
 deploy.sh

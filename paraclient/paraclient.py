@@ -1023,8 +1023,9 @@ class ParaClient:
             return {}
         if allowguests and subjectid == "*":
             permission.append("?")
-        url = "_permissions/" + self.urlenc(subjectid) + "/" + self.urlenc(resourcepath)
-        return self.getEntity(self.invokePut(url, json.dumps(permission)))
+        return self.getEntity(self.invokePut("_permissions/" + self.urlenc(subjectid) + "/" + 
+                                             base64.urlsafe_b64encode(bytes(resourcepath, "utf-8")).decode("utf-8"), 
+                                             json.dumps(permission)))
 
     def revokeResourcePermission(self, subjectid: str, resourcepath: str):
         """
@@ -1035,8 +1036,8 @@ class ParaClient:
         """
         if not subjectid or not resourcepath:
             return {}
-        return self.getEntity(self.invokeDelete(("_permissions/" +
-                                                 self.urlenc(subjectid) + "/" + self.urlenc(resourcepath))))
+        return self.getEntity(self.invokeDelete(("_permissions/" + self.urlenc(subjectid) + 
+                                                 "/" + base64.urlsafe_b64encode(bytes(resourcepath, "utf-8")).decode("utf-8"))))
 
     def revokeAllResourcePermissions(self, subjectid: str):
         """
@@ -1058,8 +1059,9 @@ class ParaClient:
         """
         if not subjectid or not resourcepath or not httpmethod:
             return False
-        url = "_permissions/" + self.urlenc(subjectid) + "/" + self.urlenc(resourcepath) + "/" + httpmethod
-        res = self.getEntity(self.invokeGet(url))
+        res = self.getEntity(self.invokeGet("_permissions/" + self.urlenc(subjectid) + 
+                                            "/" + base64.urlsafe_b64encode(bytes(resourcepath, "utf-8")).decode("utf-8") + 
+                                            "/" + httpmethod))
         return True if res else False
 
     # /////////////////////////////////////////////

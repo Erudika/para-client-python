@@ -1,0 +1,40 @@
+[build-system]
+requires = ["uv-build>=0.9"]
+build-backend = "uv_build"
+
+[project]
+name = "paraclient"
+version = "1.36.12"
+description = "Python client for Para"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.9"
+authors = [
+  { name = "Alexander Bogdanovski", email = "alex@erudika.com" },
+]
+license-files = ["LICENSE"]
+license = "Apache-2.0"
+classifiers = [
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = [
+  "requests>=2.32.5",
+  "aws-requests-auth==0.4.3",
+  "urllib3>=2.6.2",
+]
+
+[project.optional-dependencies]
+test = [
+  "testcontainers>=4.6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Erudika/para-client-python"
+Documentation = "https://paraio.org/docs"
+Issues = "https://github.com/Erudika/para-client-python/issues"
+
+[tool.uv.build-backend]
+module-root = "."
+module-name = "paraclient"
