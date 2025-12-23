@@ -16,16 +16,24 @@ This is the Python client for Para.
 
 ### Quick start
 
+**Prerequisites:**
+
+- [uv](https://github.com/astral-sh/uv)
+- Python 3.9+
+
 1. Use the [PyPI](https://pypi.python.org/pypi) package manager to install the Python client for Para:
+
 ```sh
 $ pip3 install paraclient
 ```
 
-2. Initialize the client with your access and secret API keys.
+2. Initialize the client with your access and secret API keys:
+
 ```python
 from paraclient import ParaClient
 
-paraclient = ParaClient('ACCESS_KEY', 'SECRET_KEY');
+paraclient = ParaClient('ACCESS_KEY', 'SECRET_KEY')
+paraclient.setEndpoint("http://localhost:8080")
 ```
 
 ## Documentation
@@ -34,16 +42,18 @@ paraclient = ParaClient('ACCESS_KEY', 'SECRET_KEY');
 
 ## Development
 
-This repository now relies on [uv](https://github.com/astral-sh/uv) for dependency management, builds, and publishing, and targets Python 3.9+.
+This project uses [uv](https://github.com/astral-sh/uv) for dependency management, builds, and publishing, and targets Python 3.9+.
 
 1. Install uv by following the [official instructions](https://docs.astral.sh/uv/getting-started/installation/).
-2. Create and update the local virtual environment with `uv sync`. This installs every dependency declared in `pyproject.toml` and pinned in `uv.lock` into `.venv/`. Add the `--extra test` flag if you need the Testcontainers-powered test suite dependencies.
-3. Run the test suite or any other tooling via `uv run`, for example `uv run pytest`.
-4. Build distributable artifacts with `uv build`; the command produces both the sdist and wheel in `dist/`.
+2. Run `uv sync` first. This installs every dependency declared in `pyproject.toml` and pinned in `uv.lock` into `.venv/`.
+3. Run the test suite via `uv sync --extra test` and `uv run python -m unittest`.
+4. Build distributable artifacts with `uv build` (output located in `dist/`).
 
 When dependencies change, update the `[project]` section of `pyproject.toml`, then regenerate the lock file with `uv lock --upgrade`.
 
-The test suite uses [Testcontainers](https://testcontainers.com/) to spin up the `erudikaltd/para:latest_stable` Docker image automatically, so ensure Docker is installed and the daemon is running before invoking `uv run python -m unittest`. You can override some environment variables (see `tests/test_paraclient.py`).
+The test suite uses [Testcontainers](https://testcontainers.com/) to spin up Para Docker container automatically,
+so ensure Docker is installed and the daemon is running before invoking `uv run python -m unittest`.
+You can override some environment variables (see `tests/test_paraclient.py`).
 
 ## Contributing
 

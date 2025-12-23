@@ -157,7 +157,7 @@ wheels = [
 
 [[package]]
 name = "paraclient"
-version = "1.36.12"
+version = "1.37.0"
 source = { editable = "." }
 dependencies = [
     { name = "aws-requests-auth" },
