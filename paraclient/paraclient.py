@@ -966,7 +966,10 @@ class ParaClient:
         @param type_: a type
         @return: a map containing all validation constraints.
         """
-        return self.getEntity(self.invokeGet("_constraints/" + self.urlenc(type_)))
+        if not type_:
+            return self.getEntity(self.invokeGet("_constraints"))
+        else:
+            return self.getEntity(self.invokeGet("_constraints/" + self.urlenc(type_)))
 
     def addValidationConstraint(self, type_: str, field: str, c: Constraint):
         """

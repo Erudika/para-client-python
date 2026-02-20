@@ -544,7 +544,7 @@ class ParaClientTests(TestCase):
         self.pc.removeAppSetting("prop3")
         self.pc.removeAppSetting(" ")
         self.pc.removeAppSetting(None)
-        self.assertIs(len(self.pc.appSettings("prop3")), 0)
+        self.assertIsNot("prop3" in self.pc.appSettings().keys(), True)
         self.assertIs(len(self.pc.appSettings()), 2)
         self.pc.setAppSettings({})
 
