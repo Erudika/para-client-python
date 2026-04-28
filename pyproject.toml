@@ -4,10 +4,10 @@ build-backend = "uv_build"
 
 [project]
 name = "paraclient"
-version = "1.37.2"
+version = "1.37.3"
 description = "Python client for Para"
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
   { name = "Alexander Bogdanovski", email = "alex@erudika.com" },
 ]
@@ -20,7 +20,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-  "requests>=2.32.5",
+  "requests>=2.33.1",
   "aws-requests-auth==0.4.3",
   "urllib3>=2.6.3",
 ]
