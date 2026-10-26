@@ -398,7 +398,7 @@ class ParaClientTests(TestCase):
         self.assertEqual(st1, "cool")
 
         md1 = self.pc.markdownToHtml("# hello **test**")
-        self.assertEqual(md1, "<h1>hello <strong>test</strong></h1>\n")
+        self.assertEqual(md1, '<h1><a href="#hello-test" id="hello-test">hello <strong>test</strong></a></h1>\n')
 
         ht1 = self.pc.approximately(15000)
         self.assertEqual(ht1, "15s")
