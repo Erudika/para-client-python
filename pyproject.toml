@@ -1,10 +1,10 @@
 [build-system]
-requires = ["uv-build>=0.9"]
+requires = ["uv-build>=0.9,<0.14"]
 build-backend = "uv_build"
 
 [project]
 name = "paraclient"
-version = "1.37.6"
+version = "1.37.7"
 description = "Python client for Para"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
@@ -20,14 +20,14 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-  "requests>=2.33.1",
+  "requests>=2.34.2",
   "aws-requests-auth==0.4.3",
-  "urllib3>=2.6.3",
+  "urllib3>=2.8.0",
 ]
 
 [project.optional-dependencies]
 test = [
-  "testcontainers>=4.6.0",
+  "testcontainers>=4.15.0",
 ]
 
 [project.urls]

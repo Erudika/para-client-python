@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10"
 
 [[package]]
@@ -211,7 +211,7 @@ wheels = [
 
 [[package]]
 name = "paraclient"
-version = "1.37.5"
+version = "1.37.7"
 source = { editable = "." }
 dependencies = [
     { name = "aws-requests-auth" },
@@ -227,9 +227,9 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "aws-requests-auth", specifier = "==0.4.3" },
-    { name = "requests", specifier = ">=2.33.1" },
-    { name = "testcontainers", marker = "extra == 'test'", specifier = ">=4.6.0" },
-    { name = "urllib3", specifier = ">=2.6.3" },
+    { name = "requests", specifier = ">=2.34.2" },
+    { name = "testcontainers", marker = "extra == 'test'", specifier = ">=4.15.0" },
+    { name = "urllib3", specifier = ">=2.8.0" },
 ]
 provides-extras = ["test"]
 
